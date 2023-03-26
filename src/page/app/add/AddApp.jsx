@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Form, Button, Switch, Spin } from "antd";
 import { useHistory } from "react-router-dom";
@@ -25,7 +25,7 @@ const WrapperStyle = styled.div`
 `;
 
 function AddApp() {
-  const formElemt = useRef(null);
+  const [form] = Form.useForm();
   const history = useHistory();
   const { id } = useParams();
   const [isloading, setIsloading] = useState(false);
@@ -42,8 +42,8 @@ function AddApp() {
   async function fetchApi(id) {
     const { data } = await appApi.getId(id);
     setIsloading(false);
-    if (formElemt.current) {
-      formElemt.current.setFieldsValue({ ...data });
+    if (form) {
+      form.setFieldsValue({ ...data });
     }
     setOtheForm({ ...data });
   }
@@ -118,7 +118,7 @@ function AddApp() {
     <WrapperMaindash title={id ? "Sửa ứng dụng" : "Thêm ứng dụng"}>
       {!isloading ? (
         <Form
-          ref={formElemt}
+          form={form}
           name="control-hooks"
           onFinish={onFinish}
           className="form"
