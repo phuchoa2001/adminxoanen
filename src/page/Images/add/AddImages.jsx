@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import FormData from "form-data";
 import { Button, Spin } from "antd";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -9,6 +8,7 @@ import UploadForm from "../../../components/form/Upload";
 import WrapperMaindash from "../../../components/WrapperMaindash";
 import { ImageApi } from "../../../api/imageApi";
 import Permission from "../../../components/permission/Permission";
+import getBase64 from "../../../commons/getBase64";
 
 const SpinStyles = styled.div`
   position: fixed;
@@ -41,15 +41,19 @@ function AddImages(props) {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (image?.name) {
-      var form = new FormData();
-      form.append("image", image);
+      const base64 = await getBase64(image);
+
       setLoading(true);
-      ImageApi.add(form).finally((res) => {
-        setLoading(false);
-        history.goBack();
-      });
+
+      ImageApi.add({
+				url : base64 , 
+				name : image.name
+			}).finally((res) => {
+				setLoading(false);
+				history.goBack();
+			});
     } else {
       setError("Bạn chưa có hình ảnh");
     }
